@@ -5,14 +5,15 @@
         <meta charset="UTF-8">
         <meta name="title" content="The Ripple Effect">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <link rel="icon" type="image/png" href="/hubfavicon.png">
-        <link rel="apple-touch-icon-precomposed" type="image/png" href="/hubfavicon.png">
+        <link rel="icon" type="image/png" href="hubfavicon.png">
+        <link rel="apple-touch-icon-precomposed" type="image/png" href="hubfavicon.png">
         <style>
             html, body{
                 margin: 0;
                 padding: 0;
                 height: 100vh;
                 width: 100vw;
+                background-color: #263746;
             }
 
             iframe{
@@ -20,8 +21,36 @@
                 width: 100%;
                 border: none;
             }
+            #container{
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                width: 100vw;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #msg{
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                padding: 30px;
+                width: 50%;
+                max-width: 600px;
+                display: flex;
+                flex-direction: column;
+                background-color: white;
+            }
+            #hublogo{
+                width: 100px;
+                align-self: center;
+                margin-bottom: 50px;
+            }
         </style>
     </head>
     <body>
-        <iframe src="https://prezi.com/p/gf9ieqssrexe/embed/" id="iframe_container" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allow="autoplay; fullscreen"></iframe>    </body>
+        <div id="container">
+         
+        </div>    
+    </body>
+    <script type="text/javascript" src="browserdetection.js"></script>
 </html>
