@@ -38,5 +38,11 @@ else if(detectBrowser() != "Not IE"){
 
 }
 else{
-    document.getElementById("container").innerHTML = "<iframe src='https://prezi.com/p/gf9ieqssrexe/embed/' id='iframe_container' frameborder='0' webkitallowfullscreen='' mozallowfullscreen='' allowfullscreen='' allow='autoplay; fullscreen'></iframe>"
+    //document.getElementById("container").innerHTML = "<iframe src='https://prezi.com/p/gf9ieqssrexe/embed/' id='iframe_container' frameborder='0' webkitallowfullscreen='' mozallowfullscreen='' allowfullscreen='' allow='autoplay; fullscreen'></iframe>"
+
+    let player = new PreziPlayer('container', {
+        preziId: 'gf9ieqssrexe',
+        controls: false
+    });
+
 }
