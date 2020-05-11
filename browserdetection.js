@@ -42,7 +42,7 @@ else{
 
     let player = new PreziPlayer('container', {
         preziId: 'gf9ieqssrexe',
-        controls: false
+        controls: true
     });
 
 }
