@@ -35,3 +35,9 @@ iframe{
     align-self: center;
     margin-bottom: 50px;
 }
+
+#preziPlayer{
+    display: none;
+    height: 100%;
+    width: 100%
+}

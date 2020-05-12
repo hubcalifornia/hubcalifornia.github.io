@@ -1,8 +1,9 @@
-(function() {
+//default prezi library stuff
+(function () {
     "use strict";
-    var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+    var __bind = function (fn, me) { return function () { return fn.apply(me, arguments); }; };
 
-    window.PreziPlayer = (function() {
+    window.PreziPlayer = (function () {
 
         PreziPlayer.API_VERSION = 1;
         PreziPlayer.CURRENT_STEP = 'currentStep';
@@ -22,28 +23,28 @@
         PreziPlayer.players = {};
         PreziPlayer.binded_methods = ['changesHandler'];
 
-        PreziPlayer.createMultiplePlayers = function(optionArray){
-            for(var i=0; i<optionArray.length; i++) {
+        PreziPlayer.createMultiplePlayers = function (optionArray) {
+            for (var i = 0; i < optionArray.length; i++) {
                 var optionSet = optionArray[i];
                 new PreziPlayer(optionSet.id, optionSet);
             };
         };
 
-        PreziPlayer.messageReceived = function(event){
+        PreziPlayer.messageReceived = function (event) {
             var message, item, player;
             try {
                 message = JSON.parse(event.data);
-            } catch (e) {}
-            if (message && message.id && (player = PreziPlayer.players[message.id])){
+            } catch (e) { }
+            if (message && message.id && (player = PreziPlayer.players[message.id])) {
                 if (player.options.debug === true) {
                     if (console && console.log) console.log('received', message);
                 }
-                if (message.type === "changes"){
+                if (message.type === "changes") {
                     player.changesHandler(message);
                 }
-                for (var i=0; i<player.callbacks.length; i++) {
+                for (var i = 0; i < player.callbacks.length; i++) {
                     item = player.callbacks[i];
-                    if (item && message.type === item.event){
+                    if (item && message.type === item.event) {
                         item.callback(message);
                     }
                 }
@@ -52,16 +53,16 @@
 
         function PreziPlayer(id, options) {
             var params, paramString = "", _this = this;
-            if (PreziPlayer.players[id]){
+            if (PreziPlayer.players[id]) {
                 PreziPlayer.players[id].destroy();
             }
-            for(var i=0; i<PreziPlayer.binded_methods.length; i++) {
+            for (var i = 0; i < PreziPlayer.binded_methods.length; i++) {
                 var method_name = PreziPlayer.binded_methods[i];
                 _this[method_name] = __bind(_this[method_name], _this);
             };
             options = options || {};
             this.options = options;
-            this.values = {'status': PreziPlayer.STATUS_LOADING};
+            this.values = { 'status': PreziPlayer.STATUS_LOADING };
             this.values[PreziPlayer.CURRENT_STEP] = 0;
             this.values[PreziPlayer.CURRENT_ANIMATION_STEP] = 0;
             this.values[PreziPlayer.CURRENT_OBJECT] = null;
@@ -77,9 +78,9 @@
                 { name: 'explorable', value: 1 }, // disabling exploration is not supported yet
                 { name: 'controls', value: options.controls ? 1 : 0 }
             ];
-            for(var i=0; i<params.length; i++) {
+            for (var i = 0; i < params.length; i++) {
                 var param = params[i];
-                paramString += (i===0 ? "?" : "&") + param.name + "=" + param.value;
+                paramString += (i === 0 ? "?" : "&") + param.name + "=" + param.value;
             };
             this.iframe.src = PreziPlayer.domain + PreziPlayer.path + paramString;
             this.iframe.frameBorder = 0;
@@ -92,33 +93,33 @@
             this.embedTo.innerHTML = '';
             this.embedTo.appendChild(this.iframe);
 
-            this.initPollInterval = setInterval(function(){
-                _this.sendMessage({'action': 'init'});
+            this.initPollInterval = setInterval(function () {
+                _this.sendMessage({ 'action': 'init' });
             }, 200);
             PreziPlayer.players[id] = this;
         }
 
-        PreziPlayer.prototype.changesHandler = function(message) {
+        PreziPlayer.prototype.changesHandler = function (message) {
             var key, value, j, item;
             if (this.initPollInterval) {
                 clearInterval(this.initPollInterval);
                 this.initPollInterval = false;
             }
             for (key in message.data) {
-                if (message.data.hasOwnProperty(key)){
+                if (message.data.hasOwnProperty(key)) {
                     value = message.data[key];
                     this.values[key] = value;
-                    for (j=0; j<this.callbacks.length; j++) {
+                    for (j = 0; j < this.callbacks.length; j++) {
                         item = this.callbacks[j];
-                        if (item && item.event === key + "Change"){
-                            item.callback({type: item.event, value: value});
+                        if (item && item.event === key + "Change") {
+                            item.callback({ type: item.event, value: value });
                         }
                     }
                 }
             }
         };
 
-        PreziPlayer.prototype.destroy = function() {
+        PreziPlayer.prototype.destroy = function () {
             if (this.initPollInterval) {
                 clearInterval(this.initPollInterval);
                 this.initPollInterval = false;
@@ -126,7 +127,7 @@
             this.embedTo.innerHTML = '';
         };
 
-        PreziPlayer.prototype.sendMessage = function(message) {
+        PreziPlayer.prototype.sendMessage = function (message) {
             if (this.options.debug === true) {
                 if (console && console.log) console.log('sent', message);
             }
@@ -136,130 +137,130 @@
         };
 
         PreziPlayer.prototype.nextStep = /* nextStep is DEPRECATED */
-        PreziPlayer.prototype.flyToNextStep = function() {
-            return this.sendMessage({
-                'action': 'present',
-                'data': ['moveToNextStep']
-            });
-        };
+            PreziPlayer.prototype.flyToNextStep = function () {
+                return this.sendMessage({
+                    'action': 'present',
+                    'data': ['moveToNextStep']
+                });
+            };
 
         PreziPlayer.prototype.previousStep = /* previousStep is DEPRECATED */
-        PreziPlayer.prototype.flyToPreviousStep = function() {
-            return this.sendMessage({
-                'action': 'present',
-                'data': ['moveToPrevStep']
-            });
-        };
+            PreziPlayer.prototype.flyToPreviousStep = function () {
+                return this.sendMessage({
+                    'action': 'present',
+                    'data': ['moveToPrevStep']
+                });
+            };
 
         PreziPlayer.prototype.toStep = /* toStep is DEPRECATED */
-        PreziPlayer.prototype.flyToStep = function(step, animation_step) {
-            var obj = this;
-            // check animation_step
-            if (animation_step > 0 &&
-                obj.values.animationCountOnSteps &&
-                obj.values.animationCountOnSteps[step] <= animation_step) {
-                animation_step = obj.values.animationCountOnSteps[step];
-            }
-            // jump to animation steps by calling flyToNextStep()
-            function doAnimationSteps() {
-                if (obj.values.isMoving == true) {
-                    setTimeout(doAnimationSteps, 100); // wait until the flight ends
-                    return;
+            PreziPlayer.prototype.flyToStep = function (step, animation_step) {
+                var obj = this;
+                // check animation_step
+                if (animation_step > 0 &&
+                    obj.values.animationCountOnSteps &&
+                    obj.values.animationCountOnSteps[step] <= animation_step) {
+                    animation_step = obj.values.animationCountOnSteps[step];
                 }
-                while (animation_step-- > 0) {
-                    obj.flyToNextStep(); // do the animation steps
+                // jump to animation steps by calling flyToNextStep()
+                function doAnimationSteps() {
+                    if (obj.values.isMoving == true) {
+                        setTimeout(doAnimationSteps, 100); // wait until the flight ends
+                        return;
+                    }
+                    while (animation_step-- > 0) {
+                        obj.flyToNextStep(); // do the animation steps
+                    }
                 }
-            }
-            setTimeout(doAnimationSteps, 200); // 200ms is the internal "reporting" time
-            // jump to the step
-            return this.sendMessage({
-                'action': 'present',
-                'data': ['moveToStep', Number(step)]
-            });
-        };
+                setTimeout(doAnimationSteps, 200); // 200ms is the internal "reporting" time
+                // jump to the step
+                return this.sendMessage({
+                    'action': 'present',
+                    'data': ['moveToStep', Number(step)]
+                });
+            };
 
         PreziPlayer.prototype.toObject = /* toObject is DEPRECATED */
-        PreziPlayer.prototype.flyToObject = function(objectId) {
-            return this.sendMessage({
-                'action': 'present',
-                'data': ['moveToObject', objectId]
-            });
-        };
+            PreziPlayer.prototype.flyToObject = function (objectId) {
+                return this.sendMessage({
+                    'action': 'present',
+                    'data': ['moveToObject', objectId]
+                });
+            };
 
-        PreziPlayer.prototype.play = function(defaultDelay) {
+        PreziPlayer.prototype.play = function (defaultDelay) {
             return this.sendMessage({
                 'action': 'present',
                 'data': ['startAutoPlay', Number(defaultDelay)]
             });
         };
 
-        PreziPlayer.prototype.stop = function() {
+        PreziPlayer.prototype.stop = function () {
             return this.sendMessage({
                 'action': 'present',
                 'data': ['stopAutoPlay']
             });
         };
 
-        PreziPlayer.prototype.pause = function(defaultDelay) {
+        PreziPlayer.prototype.pause = function (defaultDelay) {
             return this.sendMessage({
                 'action': 'present',
                 'data': ['pauseAutoPlay', Number(defaultDelay)]
             });
         };
 
-        PreziPlayer.prototype.getCurrentStep = function() {
+        PreziPlayer.prototype.getCurrentStep = function () {
             return this.values.currentStep;
         };
 
-        PreziPlayer.prototype.getCurrentAnimationStep = function() {
+        PreziPlayer.prototype.getCurrentAnimationStep = function () {
             return this.values.currentAnimationStep;
         };
 
-        PreziPlayer.prototype.getCurrentObject = function() {
+        PreziPlayer.prototype.getCurrentObject = function () {
             return this.values.currentObject;
         };
 
-        PreziPlayer.prototype.getStatus = function() {
+        PreziPlayer.prototype.getStatus = function () {
             return this.values.status;
         };
 
-        PreziPlayer.prototype.isPlaying = function() {
+        PreziPlayer.prototype.isPlaying = function () {
             return this.values.isAutoPlaying;
         };
 
-        PreziPlayer.prototype.getStepCount = function() {
+        PreziPlayer.prototype.getStepCount = function () {
             return this.values.stepCount;
         };
 
-        PreziPlayer.prototype.getAnimationCountOnSteps = function() {
+        PreziPlayer.prototype.getAnimationCountOnSteps = function () {
             return this.values.animationCountOnSteps;
         };
 
-        PreziPlayer.prototype.getTitle = function() {
+        PreziPlayer.prototype.getTitle = function () {
             return this.values.title;
         };
 
-        PreziPlayer.prototype.setDimensions = function(dims) {
+        PreziPlayer.prototype.setDimensions = function (dims) {
             for (var parameter in dims) {
                 this.iframe[parameter] = dims[parameter];
             }
         }
 
-        PreziPlayer.prototype.getDimensions = function() {
+        PreziPlayer.prototype.getDimensions = function () {
             return {
                 width: parseInt(this.iframe.width, 10),
                 height: parseInt(this.iframe.height, 10)
             }
         }
 
-        PreziPlayer.prototype.on = function(event, callback) {
+        PreziPlayer.prototype.on = function (event, callback) {
             this.callbacks.push({
                 event: event,
                 callback: callback
             });
         };
 
-        PreziPlayer.prototype.off = function(event, callback) {
+        PreziPlayer.prototype.off = function (event, callback) {
             var j, item;
             if (event === undefined) {
                 this.callbacks = [];
@@ -267,7 +268,7 @@
             j = this.callbacks.length;
             while (j--) {
                 item = this.callbacks[j];
-                if (item && item.event === event && (callback === undefined || item.callback === callback)){
+                if (item && item.event === event && (callback === undefined || item.callback === callback)) {
                     this.callbacks.splice(j, 1);
                 }
             }
@@ -284,3 +285,4 @@
     })();
 
 })();
+
